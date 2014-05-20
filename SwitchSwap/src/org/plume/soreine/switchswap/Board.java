@@ -80,28 +80,35 @@ public class Board {
 	}
 
 	// Swap with propagation
-	public void propagate(int i, int j, boolean instant) {
+	public void propagate(int i, int j) {
 		// Propagate
 		for (int k = 0; k < rows; k++) {
-			if (instant)
-				tiles[i * columns + k].instantSwap();
-			else
-				tiles[i * columns + k].swap();
+			tiles[i * columns + k].swap();
 		}
 		for (int k = 0; k < columns; k++) {
 			if (k != i) {
-				if (instant)
-					tiles[k * columns + j].instantSwap();
-				else
-					tiles[k * columns + j].swap();
+				tiles[k * columns + j].swap();
 			}
 		}
 	}
 
-	public void propagate(int number, boolean instant) {
+	// Swap with propagation instantly
+	public void instantPropagate(int i, int j) {
+		// Propagate
+		for (int k = 0; k < rows; k++) {
+			tiles[i * columns + k].instantSwap();
+		}
+		for (int k = 0; k < columns; k++) {
+			if (k != i) {
+				tiles[k * columns + j].instantSwap();
+			}
+		}
+	}
+
+	public void instantPropagate(int number) {
 		int i = number / columns;
 		int j = (number - i * columns);
-		propagate(i, j, instant);
+		propagate(i, j);
 	}
 
 	public void draw(Graphics g) {
