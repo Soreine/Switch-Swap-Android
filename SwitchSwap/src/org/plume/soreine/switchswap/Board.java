@@ -33,11 +33,14 @@ public class Board {
 		this.columns = columns;
 
 		Random rnd = new Random();
+		int location;
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
-				tiles[i * columns + j] = new Tile(x + widthStep * j, y
-						+ heightStep * i, sizeX, sizeY, numberOfColors);
+				location = i * columns + j;
+				tiles[location] = new Tile(x + widthStep * j, y + heightStep
+						* i, sizeX, sizeY, numberOfColors);
+				tiles[location].setLocationOnBoard(this, i, j);
 			}
 		}
 
@@ -55,7 +58,7 @@ public class Board {
 	public void instantShuffle(int times) {
 		Random rnd = new Random();
 		for (int k = 0; k < times; k++) {
-			instantPropagate(rnd.nextInt(rows * columns));
+			instantSwap(rnd.nextInt(rows * columns));
 		}
 	}
 
@@ -65,7 +68,7 @@ public class Board {
 
 				// Check if touched
 				if (tiles[i * columns + j].touch(event)) {
-					propagate(i, j);
+					swap(i, j);
 					return;
 				}
 			}
@@ -80,23 +83,23 @@ public class Board {
 	}
 
 	// Swap with propagation
-	public void propagate(int i, int j) {
-		int coord = i*columns + j;
+	public void swap(int i, int j) {
+		int coord = i * columns + j;
 		// Propagate
 		tiles[coord].swapAlone(Tile.Moving.UP);
-		
-		if(j + 1 < rows)
+
+		if (j + 1 < rows)
 			tiles[coord + 1].swap(Tile.Moving.RIGHT);
-		if(j - 1 >= 0)
+		if (j - 1 >= 0)
 			tiles[coord - 1].swap(Tile.Moving.LEFT);
-		if(i + 1 < rows)
+		if (i + 1 < rows)
 			tiles[coord + columns].swap(Tile.Moving.DOWN);
-		if(i - 1 >= 0)
+		if (i - 1 >= 0)
 			tiles[coord - columns].swap(Tile.Moving.UP);
 	}
 
 	// Swap with propagation instantly
-	public void instantPropagate(int i, int j) {
+	public void instantSwap(int i, int j) {
 		// Propagate
 		for (int k = 0; k < rows; k++) {
 			tiles[i * columns + k].instantSwap();
@@ -108,10 +111,33 @@ public class Board {
 		}
 	}
 
-	public void instantPropagate(int number) {
+	public void instantSwap(int number) {
 		int i = number / columns;
 		int j = (number - i * columns);
-		propagate(i, j);
+		swap(i, j);
+	}
+
+	public void propagate(Tile.Moving move, int i, int j) {
+		int nextI = i, nextJ = j;
+		switch (move) {
+		case DOWN:
+			nextI++;
+			break;
+		case LEFT:
+			nextJ--;
+			break;
+		case RIGHT:
+			nextJ++;
+			break;
+		case UP:
+			nextI--;
+			break;
+		default:
+			return;
+		}
+
+		if (nextI < columns && nextJ < rows && nextI >= 0 && nextJ >= 0)
+			tiles[nextI * columns + nextJ].swap(move);
 	}
 
 	public void draw(Graphics g) {

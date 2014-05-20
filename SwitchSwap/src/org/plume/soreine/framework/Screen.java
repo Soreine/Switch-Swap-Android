@@ -8,8 +8,10 @@ public abstract class Screen {
 		this.game = game;
 	}
 
+	// deltaTime in milliseconds
 	public abstract void update(float deltaTime);
 
+	// deltaTime in milliseconds
 	public abstract void paint(float deltaTime);
 
 	public abstract void pause();
