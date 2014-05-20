@@ -4,12 +4,13 @@ import java.util.Random;
 
 import org.plume.soreine.framework.Graphics;
 import org.plume.soreine.framework.Input.TouchEvent;
+import org.plume.soreine.switchswap.Tile.Moving;
 
 import android.graphics.Color;
 
 public class Tile {
 
-	enum Moving {
+	public enum Moving {
 		UP, DOWN, RIGHT, LEFT, STILL
 	}
 
@@ -22,6 +23,8 @@ public class Tile {
 
 	private int x, y, sizeX, sizeY, maxState;
 
+	private boolean mustPropagate;
+
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState, int initState) {
 		assert (maxState > initState);
 
@@ -32,21 +35,32 @@ public class Tile {
 		this.maxState = maxState;
 		this.state = initState;
 		this.moving = Moving.STILL;
+		this.mustPropagate = false;
 	}
 
-	// With random state
+	// With random initial state
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState) {
 		this(x, y, sizeX, sizeY, maxState, 0);
 	}
 
-	public void swap() {
-		this.instantSwap();
-		// TODO 
-	}
-
+	
 	public void instantSwap() {
 		this.state = (this.state + 1) % maxState;
 	}
+	
+	public void swap(Moving move) {
+		this.instantSwap();
+		this.moving = move;
+		this.mustPropagate = true;
+		}
+
+
+	public void swapAlone(Moving move) {
+		this.instantSwap();
+		this.moving = move;
+		this.mustPropagate = false;
+	}
+
 
 	public void draw(Graphics g) {
 		g.drawRect(x, y, sizeX, sizeY, tileColor[state]);

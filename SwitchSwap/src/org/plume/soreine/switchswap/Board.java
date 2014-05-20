@@ -81,15 +81,18 @@ public class Board {
 
 	// Swap with propagation
 	public void propagate(int i, int j) {
+		int coord = i*columns + j;
 		// Propagate
-		for (int k = 0; k < rows; k++) {
-			tiles[i * columns + k].swap();
-		}
-		for (int k = 0; k < columns; k++) {
-			if (k != i) {
-				tiles[k * columns + j].swap();
-			}
-		}
+		tiles[coord].swapAlone(Tile.Moving.UP);
+		
+		if(j + 1 < rows)
+			tiles[coord + 1].swap(Tile.Moving.RIGHT);
+		if(j - 1 >= 0)
+			tiles[coord - 1].swap(Tile.Moving.LEFT);
+		if(i + 1 < rows)
+			tiles[coord + columns].swap(Tile.Moving.DOWN);
+		if(i - 1 >= 0)
+			tiles[coord - columns].swap(Tile.Moving.UP);
 	}
 
 	// Swap with propagation instantly
