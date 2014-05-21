@@ -1,11 +1,7 @@
 package org.plume.soreine.switchswap;
 
-import java.util.Random;
-
 import org.plume.soreine.framework.Graphics;
 import org.plume.soreine.framework.Input.TouchEvent;
-import org.plume.soreine.switchswap.Tile.Moving;
-
 import android.graphics.Color;
 
 public class Tile {
@@ -22,7 +18,7 @@ public class Tile {
 
 	private Moving moving;
 
-	private int x, y, sizeX, sizeY, maxState, location;
+	private int x, y, sizeX, sizeY, maxState;
 
 	// The index on the board
 	public int i, j;

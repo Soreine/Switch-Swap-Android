@@ -5,8 +5,6 @@ import org.plume.soreine.framework.Graphics;
 import org.plume.soreine.framework.Graphics.ImageFormat;
 import org.plume.soreine.framework.Screen;
 
-import android.util.Log;
-
 public class SplashLoadingScreen extends Screen {
 
 	public SplashLoadingScreen(Game game) {

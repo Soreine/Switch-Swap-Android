@@ -1,6 +1,5 @@
 package org.plume.soreine.switchswap;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.plume.soreine.framework.Graphics;
@@ -32,7 +31,6 @@ public class Board {
 		this.rows = rows;
 		this.columns = columns;
 
-		Random rnd = new Random();
 		int location;
 
 		for (int i = 0; i < rows; i++) {

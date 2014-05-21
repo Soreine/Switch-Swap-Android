@@ -9,7 +9,6 @@ import org.plume.soreine.framework.Input.TouchEvent;
 import org.plume.soreine.framework.implementation.AndroidGame;
 
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
 
 public class SwitchSwapScreen extends Screen {
