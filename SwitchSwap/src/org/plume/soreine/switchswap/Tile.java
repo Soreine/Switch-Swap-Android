@@ -28,7 +28,7 @@ public class Tile {
 
 	private double rotation = 0;
 
-	private static final int MS_ROTATION_TIME = 1000;
+	private static final int MS_ROTATION_TIME = 800;
 
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState, int initState) {
 		assert (maxState > initState);
@@ -59,13 +59,19 @@ public class Tile {
 	}
 
 	public void swap(Moving move) {
+		if (mustPropagate) {
+			propagate();
+		}
 		this.instantSwap();
-		this.moving = move;
 		this.mustPropagate = true;
+		this.moving = move;
 		this.rotation = 0;
 	}
 
 	public void swapAlone(Moving move) {
+		if (mustPropagate) {
+			propagate();
+		}
 		this.instantSwap();
 		this.moving = move;
 		this.mustPropagate = false;
@@ -73,32 +79,36 @@ public class Tile {
 	}
 
 	public void draw(Graphics g) {
-		// if (moving == Moving.STILL) {
+		if (moving == Moving.STILL) {
 			g.drawRect(x, y, sizeX, sizeY, palette[state]);
-//		} else {
-//			drawTurning(g);
-//		}
+		} else {
+			drawTurning(g);
+		}
 
 	}
 
 	public void drawTurning(Graphics g) {
 		// The visible color
-		int color = (rotation > 0.5) ? color = palette[state]
+		int color = (rotation > 0.5) ? palette[state]
 				: palette[(state - 1 + maxState) % maxState];
 
-		double beta = Math.atan(5);
+		double beta = Math.atan(0.2);
+		double alpha = Math.PI * rotation;
 		// The projected coordinates of the tile vertices, relative to the tile
 		// size
+
 		double sideBegin, sideEnd, tileBegin, tileEnd;
 
-		sideBegin = (1 - Math.cos(rotation - beta)) / 2;
-		sideEnd = (1 - Math.cos(rotation + beta)) / 2;
+		sideBegin = (1 - Math.cos(alpha - beta)) / 2;
+		sideEnd = (1 - Math.cos(alpha + beta)) / 2;
 		if (rotation > 0.5) {
-			tileBegin = sideEnd;
-			tileEnd = 1 - sideBegin;
-		} else {
+			// rotation > 0.5
 			tileEnd = sideBegin;
 			tileBegin = 1 - sideEnd;
+		} else {
+			// rotation < 0.5
+			tileBegin = sideEnd;
+			tileEnd = 1 - sideBegin;
 		}
 
 		// The ratio giving the visible size of the facets
@@ -119,31 +129,33 @@ public class Tile {
 		switch (moving) {
 		case DOWN:
 			tileY = (int) (y + tileBegin * sizeY);
-			tileSizeY = (int) tileRatio * sizeY;
+			tileSizeY = (int) (tileRatio * sizeY);
 			// The side
 			sideY = (int) (y + sideBegin * sizeY);
-			sideSizeY = (int) sideRatio * sizeY;
+			sideSizeY = (int) (sideRatio * sizeY);
 			break;
 		case UP:
 			tileY = (int) (y + (1 - tileEnd) * sizeY);
-			tileSizeY = (int) tileRatio * sizeY;
+			tileSizeY = (int) (tileRatio * sizeY);
 			// The side
 			sideY = (int) (y + (1 - sideEnd) * sizeY);
-			sideSizeY = (int) sideRatio * sizeY;
+			sideSizeY = (int) (sideRatio * sizeY);
 			break;
 		case RIGHT:
 			tileX = (int) (x + tileBegin * sizeX);
-			tileSizeX = (int) tileRatio * sizeX;
+			tileSizeX = (int) (tileRatio * sizeX);
 			// The side
 			sideX = (int) (x + sideBegin * sizeX);
-			sideSizeX = (int) sideRatio * sizeX;
+			sideSizeX = (int) (sideRatio * sizeX);
 			break;
 		case LEFT:
 			tileX = (int) (x + (1 - tileEnd) * sizeX);
-			tileSizeX = (int) tileRatio * sizeX;
+			tileSizeX = (int) (tileRatio * sizeX);
 			// The side
 			sideX = (int) (x + (1 - sideEnd) * sizeX);
-			sideSizeX = (int) sideRatio * sizeX;
+			sideSizeX = (int) (sideRatio * sizeX);
+			break;
+		default:
 			break;
 		}
 
@@ -160,7 +172,7 @@ public class Tile {
 	public void update(float deltaTime) {
 		if (moving != Tile.Moving.STILL) {
 			rotation += deltaTime / MS_ROTATION_TIME;
-			if (mustPropagate && rotation > 0.5) {
+			if (mustPropagate && rotation > 0.33) {
 				propagate();
 			}
 			if (rotation > 1) {

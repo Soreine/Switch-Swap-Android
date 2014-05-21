@@ -28,8 +28,8 @@ public class SwitchSwapScreen extends Screen {
 		super(game);
 		g = game.getGraphics();
 
-		int rows = 3;
-		int columns = 3;
+		int rows = 5;
+		int columns = 5;
 		int numberOfColor = 2;
 
 		width = g.getWidth();

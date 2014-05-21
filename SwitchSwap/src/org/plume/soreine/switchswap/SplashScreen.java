@@ -28,7 +28,7 @@ public class SplashScreen extends Screen {
 
 		// Continue to Main Menu
 		long chrono2 = System.currentTimeMillis();
-		if (chrono2 - chrono1 > 4000)
+		// if (chrono2 - chrono1 > 4000)
 			game.setScreen(new SwitchSwapScreen(game));
 	}
 
