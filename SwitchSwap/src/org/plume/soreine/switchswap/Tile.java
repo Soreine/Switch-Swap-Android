@@ -10,6 +10,13 @@ public class Tile {
 		UP, DOWN, RIGHT, LEFT, STILL
 	}
 
+//	// Double buffered variables ? TODO
+//	private int[] state = { 0, 0 };
+//	private Moving[] moving = { Moving.STILL, Moving.STILL };
+//	private boolean[] mustPropagate = { false, false };
+//	private double[] rotation = { 0, 0 };
+//	private int current = 0;
+	
 	private static int sideColor = Color.GRAY;
 	private static int[] palette = { Color.rgb(199, 231, 136),
 			Color.rgb(183, 136, 231), Color.rgb(136, 190, 231) };
@@ -170,9 +177,13 @@ public class Tile {
 	}
 
 	public void update(float deltaTime) {
-		if (moving != Tile.Moving.STILL) {
+		if (moving != Moving.STILL) {
+
+			int numberOfTiles = (moving == Moving.UP || moving == Moving.DOWN) ?
+					board.getRows() : board.getColumns();
+					
 			rotation += deltaTime / MS_ROTATION_TIME;
-			if (mustPropagate && rotation > 0.33) {
+			if (mustPropagate && rotation > 2.0/((double) numberOfTiles)) {
 				propagate();
 			}
 			if (rotation > 1) {

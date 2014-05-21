@@ -8,20 +8,22 @@ import org.plume.soreine.framework.Input.TouchEvent;
 public class Board {
 
 	private Tile[] tiles;
-
+	
 	private int rows, columns;
 
 	public Board(int x, int y, int width, int height, int rows, int columns,
 			int numberOfColors) {
 		this.tiles = new Tile[rows * columns];
 
+		double ratioGap = 0.12;
+
 		// The size of the tiles
-		int sizeX = (int) (width / (columns * 1.25 - 0.25));
-		int sizeY = (int) (height / (rows * 1.25 - 0.25));
+		int sizeX = (int) (width / (columns * (1 + ratioGap) - ratioGap));
+		int sizeY = (int) (height / (rows * (1 + ratioGap) - ratioGap));
 
 		// The gap between each tile
-		int gapX = sizeX / 4;
-		int gapY = sizeY / 4;
+		int gapX = (int) (sizeX * ratioGap);
+		int gapY = (int) (sizeY * ratioGap);
 
 		// The distance from the beginning of a tile to the beginning of the
 		// next
@@ -132,6 +134,14 @@ public class Board {
 		for (Tile tile : tiles) {
 			tile.draw(g);
 		}
+	}
+
+	public int getRows() {
+		return rows;
+	}
+
+	public int getColumns() {
+		return columns;
 	}
 
 }

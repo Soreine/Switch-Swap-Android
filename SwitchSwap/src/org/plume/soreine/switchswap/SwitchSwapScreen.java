@@ -42,8 +42,8 @@ public class SwitchSwapScreen extends Screen {
 		fpsPaint.setAntiAlias(true);
 		fpsPaint.setColor(Color.GREEN);
 
-		int rows = 5;
-		int columns = 5;
+		int rows = 12;
+		int columns = 12;
 		int numberOfColor = 3;
 
 		width = g.getWidth();
@@ -66,7 +66,7 @@ public class SwitchSwapScreen extends Screen {
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
 		for (TouchEvent event : touchEvents) {
-			if (event.type == TouchEvent.TOUCH_UP)
+			if (event.type == TouchEvent.TOUCH_DOWN)
 				board.handleEvent(event);
 		}
 
@@ -103,7 +103,7 @@ public class SwitchSwapScreen extends Screen {
 	public void paint(float deltaTime) {
 
 		// Draw background
-		g.clearScreen(Color.BLACK);
+		g.clearScreen(Color.rgb(33,33,33));
 
 		board.draw(g);
 
