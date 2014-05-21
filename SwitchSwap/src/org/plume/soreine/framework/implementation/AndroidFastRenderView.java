@@ -7,8 +7,11 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class AndroidFastRenderView extends SurfaceView implements Runnable {
-	
-	private final static float deltaTimeCap = (float) 3.15;
+
+	private final static long NS_IN_MS = 1000000;
+	private final static float MS_PER_UPDATE = (float) 50;
+	private final static int MAXIMUM_UPDATES_WITHOUT_RENDERING = 5;
+
 	AndroidGame game;
 	Bitmap framebuffer;
 	Thread renderThread = null;
@@ -32,20 +35,27 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
 
 	public void run() {
 		Rect dstRect = new Rect();
-		long startTime = System.nanoTime();
+		long previous = System.nanoTime();
+		float lag = MS_PER_UPDATE; // milliseconds
 		while (running) {
 			if (!holder.getSurface().isValid())
 				continue;
 
-			float deltaTime = (System.nanoTime() - startTime) / 10000000.000f;
-			startTime = System.nanoTime();
+			long current = System.nanoTime();
+			double elapsed = (current - previous) * NS_IN_MS;
+			previous = current;
 
-			if (deltaTime > deltaTimeCap) {
-				deltaTime = deltaTimeCap;
+			lag += elapsed;
+
+			int nbUpdates = 0;
+			while (lag >= MS_PER_UPDATE
+					&& nbUpdates <= MAXIMUM_UPDATES_WITHOUT_RENDERING) {
+				game.getCurrentScreen().update(MS_PER_UPDATE);
+				lag -= MS_PER_UPDATE;
+				nbUpdates ++;
 			}
 
-			game.getCurrentScreen().update(deltaTime);
-			game.getCurrentScreen().paint(deltaTime);
+			game.getCurrentScreen().paint(lag * NS_IN_MS / MS_PER_UPDATE);
 
 			Canvas canvas = holder.lockCanvas();
 			canvas.getClipBounds(dstRect);

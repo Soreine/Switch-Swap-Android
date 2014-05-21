@@ -2,8 +2,10 @@ package org.plume.soreine.switchswap;
 
 import org.plume.soreine.framework.Game;
 import org.plume.soreine.framework.Graphics;
-import org.plume.soreine.framework.Screen;
 import org.plume.soreine.framework.Graphics.ImageFormat;
+import org.plume.soreine.framework.Screen;
+
+import android.util.Log;
 
 public class SplashLoadingScreen extends Screen {
 
@@ -13,6 +15,7 @@ public class SplashLoadingScreen extends Screen {
 
 	@Override
 	public void update(float deltaTime) {
+		Log.d("SplashLoadingScreen", "Update");
 		Graphics g = game.getGraphics();
 		Assets.logoMoon = g.newImage("logo-moon.png", ImageFormat.ARGB4444);
 		Assets.soundMoon = game.getAudio().createSound("SoreineSplash.ogg");

@@ -24,37 +24,39 @@ public class SwitchSwapScreen extends Screen {
 	private static GameState state;
 
 	private static Board board;
-	
+
 	public SwitchSwapScreen(Game game) {
 		super(game);
 		g = game.getGraphics();
 
-		
 		int rows = 3;
 		int columns = 3;
 		int numberOfColor = 2;
-		
+
 		width = g.getWidth();
 		height = g.getHeight();
-		
-		int offset = width/20;
-		
-		// (int x, int y, int width, int height, int rows, int columns, int colorNumber)
-		board = new Board(offset, offset, width - 2*offset, width - 2*offset, rows, columns, numberOfColor);
-		
+
+		int offset = width / 20;
+
+		// (int x, int y, int width, int height, int rows, int columns, int
+		// colorNumber)
+		board = new Board(offset, offset, width - 2 * offset, width - 2
+				* offset, rows, columns, numberOfColor);
+
 		state = GameState.RUNNING;
-		
+
 	}
 
 	@Override
 	public void update(float deltaTime) {
+
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
 		for (TouchEvent event : touchEvents) {
-			if(event.type == TouchEvent.TOUCH_UP)
+			if (event.type == TouchEvent.TOUCH_UP)
 				board.handleEvent(event);
 		}
-		
+
 		board.update(deltaTime);
 		switch (state) {
 		case RUNNING:
@@ -67,7 +69,6 @@ public class SwitchSwapScreen extends Screen {
 			break;
 		}
 
-		
 	}
 
 	private void updateRunning(List<TouchEvent> touchEvents) {
@@ -85,7 +86,6 @@ public class SwitchSwapScreen extends Screen {
 		}
 	}
 
-
 	@Override
 	public void paint(float deltaTime) {
 
@@ -93,7 +93,7 @@ public class SwitchSwapScreen extends Screen {
 		g.clearScreen(Color.BLACK);
 
 		board.draw(g);
-		
+
 		switch (state) {
 		case GAMEOVER:
 			break;

@@ -8,11 +8,13 @@ public abstract class Screen {
 		this.game = game;
 	}
 
-	// deltaTime in milliseconds
-	public abstract void update(float deltaTime);
+	// ms_delta in milliseconds
+	public abstract void update(float ms_delta);
 
-	// deltaTime in milliseconds
-	public abstract void paint(float deltaTime);
+	/**
+	 * @param advancement : the progression between the last frame updated and the next frame.
+	 */
+	public abstract void paint(float advancement);
 
 	public abstract void pause();
 
