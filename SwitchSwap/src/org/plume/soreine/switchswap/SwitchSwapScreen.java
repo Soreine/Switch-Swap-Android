@@ -4,17 +4,24 @@ import java.util.List;
 
 import org.plume.soreine.framework.Game;
 import org.plume.soreine.framework.Graphics;
-import org.plume.soreine.framework.Screen;
 import org.plume.soreine.framework.Input.TouchEvent;
+import org.plume.soreine.framework.Screen;
 import org.plume.soreine.framework.implementation.AndroidGame;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 
 public class SwitchSwapScreen extends Screen {
 
 	private Graphics g;
 	private static int width, height;
+
+	private static boolean showFPS = true;
+	private int timePainted = 0;
+	private Paint fpsPaint;
+	private long lastRendered;
+	private int fps = 0;
 
 	enum GameState {
 		RUNNING, PAUSED, GAMEOVER
@@ -28,9 +35,16 @@ public class SwitchSwapScreen extends Screen {
 		super(game);
 		g = game.getGraphics();
 
+		lastRendered = System.currentTimeMillis();
+		fpsPaint = new Paint();
+		fpsPaint.setTextSize(width / 30);
+		fpsPaint.setTextAlign(Paint.Align.LEFT);
+		fpsPaint.setAntiAlias(true);
+		fpsPaint.setColor(Color.GREEN);
+
 		int rows = 5;
 		int columns = 5;
-		int numberOfColor = 2;
+		int numberOfColor = 3;
 
 		width = g.getWidth();
 		height = g.getHeight();
@@ -92,6 +106,18 @@ public class SwitchSwapScreen extends Screen {
 		g.clearScreen(Color.BLACK);
 
 		board.draw(g);
+
+		// Show fps
+		timePainted++;
+		if (showFPS && (timePainted > 30)) {
+			long currentTime = System.currentTimeMillis();
+			fps = (int) ((timePainted*1000) / (currentTime - lastRendered));
+			lastRendered = currentTime;
+			timePainted = 0;
+		}
+
+		g.drawString("FPS " + fps, (int) (width * 0.02), (int) (height * 0.99),
+				fpsPaint);
 
 		switch (state) {
 		case GAMEOVER:
