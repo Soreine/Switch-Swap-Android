@@ -19,7 +19,6 @@ public class SplashScreen extends Screen {
 
 	@Override
 	public void update(float deltaTime) {
-		Log.d("SplashScreen", "Update");
 		if (firstTime) {
 			Graphics g = game.getGraphics();
 			chrono1 = System.currentTimeMillis();

@@ -15,7 +15,6 @@ public class SplashLoadingScreen extends Screen {
 
 	@Override
 	public void update(float deltaTime) {
-		Log.d("SplashLoadingScreen", "Update");
 		Graphics g = game.getGraphics();
 		Assets.logoMoon = g.newImage("logo-moon.png", ImageFormat.ARGB4444);
 		Assets.soundMoon = game.getAudio().createSound("SoreineSplash.ogg");

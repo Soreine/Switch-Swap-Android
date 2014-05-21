@@ -43,8 +43,9 @@ public class SwitchSwapScreen extends Screen {
 		board = new Board(offset, offset, width - 2 * offset, width - 2
 				* offset, rows, columns, numberOfColor);
 
-		state = GameState.RUNNING;
+		board.instantShuffle(rows * columns);
 
+		state = GameState.RUNNING;
 	}
 
 	@Override

@@ -43,16 +43,6 @@ public class Board {
 				tiles[location].setLocationOnBoard(this, i, j);
 			}
 		}
-
-		// for (int i = 0; i < rows; i++) {
-		// for (int j = 0; j < columns; j++) {
-		// if (rnd.nextBoolean())
-		// propagate(i, j);
-		// }
-		// }
-
-		instantShuffle(rows * columns);
-
 	}
 
 	public void instantShuffle(int times) {
@@ -114,7 +104,7 @@ public class Board {
 	public void instantSwap(int number) {
 		int i = number / columns;
 		int j = (number - i * columns);
-		swap(i, j);
+		instantSwap(i, j);
 	}
 
 	public void propagate(Tile.Moving move, int i, int j) {
