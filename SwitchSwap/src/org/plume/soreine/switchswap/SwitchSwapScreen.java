@@ -50,7 +50,6 @@ public class SwitchSwapScreen extends Screen {
 
 	@Override
 	public void update(float deltaTime) {
-
 		List<TouchEvent> touchEvents = game.getInput().getTouchEvents();
 
 		for (TouchEvent event : touchEvents) {

@@ -32,7 +32,7 @@ public class Tile {
 
 	private double rotation = 0;
 
-	private static long rotationTime = 100;
+	private static final int MS_ROTATION_TIME = 1000;
 
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState, int initState) {
 		assert (maxState > initState);
@@ -163,7 +163,7 @@ public class Tile {
 
 	public void update(float deltaTime) {
 		if (moving != Tile.Moving.STILL) {
-			rotation += deltaTime / rotationTime;
+			rotation += deltaTime / MS_ROTATION_TIME;
 			if (mustPropagate && rotation > 0.5) {
 				propagate();
 			}
