@@ -45,7 +45,7 @@ public class SwitchSwapScreen extends Screen {
 
 		int rows = 10;
 		int columns = 10;
-		int numberOfColor = 6;
+		int numberOfColor = 2;
 
 		width = g.getWidth();
 		height = g.getHeight();

@@ -33,7 +33,7 @@ public class Tile {
 
 	private double rotation = 0;
 
-	private static final int MS_ROTATION_TIME = 4000;
+	private static final int MS_ROTATION_TIME = 500;
 
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState, int initState) {
 		assert (maxState > initState);
@@ -193,7 +193,7 @@ public class Tile {
 
 	private void propagate() {
 		mustPropagate = false;
-		board.propagate(moving, i, j);
+		board.propagateFrom(moving, i, j);
 	}
 
 }

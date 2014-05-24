@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.plume.soreine.framework.Graphics;
 import org.plume.soreine.framework.Input.TouchEvent;
+import org.plume.soreine.framework.Queue.EmptyQueueException;
 
 import android.graphics.Color;
 
@@ -16,6 +17,8 @@ public class Board {
 	private int[] palette;
 
 	private int rows, columns;
+
+	private BoardQueue eventQueue;
 
 	public Board(int x, int y, int width, int height, int rows, int columns,
 			int numberOfColors) {
@@ -54,6 +57,8 @@ public class Board {
 				tiles[location].setLocationOnBoard(this, i, j);
 			}
 		}
+
+		this.eventQueue = new BoardQueue(30);
 	}
 
 	private void generatePalette() {
@@ -65,7 +70,7 @@ public class Board {
 		float[] sat = { 0.6f, 0.8f };
 
 		int numberOfValue = 2;
-		float[] value = { 0.6f, 0.4f , 0.5f};
+		float[] value = { 0.6f, 0.4f, 0.5f };
 
 		int initialHue = (new Random()).nextInt(360);
 		int hueStep = 360 / numberOfColors;
@@ -107,6 +112,16 @@ public class Board {
 			tile.update(deltaTime);
 		}
 
+		// Handle board event (like propagation of movement)
+		try {
+			BoardEvent event;
+			while (true) {
+				event = this.eventQueue.pull();
+				event.handle(this);
+			}
+
+		} catch (EmptyQueueException e) {
+		}
 	}
 
 	// Swap with propagation
@@ -144,7 +159,7 @@ public class Board {
 		instantSwap(i, j);
 	}
 
-	public void propagate(Tile.Moving move, int i, int j) {
+	public void propagateFrom(Tile.Moving move, int i, int j) {
 		int nextI = i, nextJ = j;
 		switch (move) {
 		case DOWN:
@@ -164,7 +179,11 @@ public class Board {
 		}
 
 		if (nextI < columns && nextJ < rows && nextI >= 0 && nextJ >= 0)
-			tiles[nextI * columns + nextJ].swap(move);
+			this.eventQueue.push(new BoardEvent(move, nextI, nextJ));
+	}
+
+	public void propagate(Tile.Moving move, int i, int j) {
+		tiles[i * columns + j].swap(move);
 	}
 
 	public void draw(Graphics g) {
