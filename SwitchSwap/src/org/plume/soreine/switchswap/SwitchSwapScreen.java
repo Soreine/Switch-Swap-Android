@@ -16,7 +16,8 @@ public class SwitchSwapScreen extends Screen {
 
 	private Graphics g;
 	private static int width, height;
-
+	private static final int backgroundColor = Color.rgb(205, 210, 210);
+			
 	private static boolean showFPS = true;
 	private int timePainted = 0;
 	private Paint fpsPaint;
@@ -40,11 +41,11 @@ public class SwitchSwapScreen extends Screen {
 		fpsPaint.setTextSize(width / 30);
 		fpsPaint.setTextAlign(Paint.Align.LEFT);
 		fpsPaint.setAntiAlias(true);
-		fpsPaint.setColor(Color.GREEN);
+		fpsPaint.setColor(Color.RED);
 
-		int rows = 12;
-		int columns = 12;
-		int numberOfColor = 3;
+		int rows = 10;
+		int columns = 10;
+		int numberOfColor = 6;
 
 		width = g.getWidth();
 		height = g.getHeight();
@@ -103,7 +104,7 @@ public class SwitchSwapScreen extends Screen {
 	public void paint(float deltaTime) {
 
 		// Draw background
-		g.clearScreen(Color.rgb(33,33,33));
+		g.clearScreen(backgroundColor);
 
 		board.draw(g);
 

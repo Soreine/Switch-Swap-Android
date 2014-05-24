@@ -5,10 +5,16 @@ import java.util.Random;
 import org.plume.soreine.framework.Graphics;
 import org.plume.soreine.framework.Input.TouchEvent;
 
+import android.graphics.Color;
+
 public class Board {
 
 	private Tile[] tiles;
-	
+
+	private int numberOfColors;
+
+	private int[] palette;
+
 	private int rows, columns;
 
 	public Board(int x, int y, int width, int height, int rows, int columns,
@@ -33,8 +39,13 @@ public class Board {
 		this.rows = rows;
 		this.columns = columns;
 
-		int location;
+		// Generate the palette of colors
+		this.numberOfColors = numberOfColors;
+		this.palette = new int[numberOfColors];
+		generatePalette();
 
+		// Initialize the array of tiles
+		int location;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				location = i * columns + j;
@@ -43,6 +54,32 @@ public class Board {
 				tiles[location].setLocationOnBoard(this, i, j);
 			}
 		}
+	}
+
+	private void generatePalette() {
+		float[] hsv = new float[3];
+
+		int[] hue = new int[numberOfColors];
+
+		int numberOfSat = 2;
+		float[] sat = { 0.6f, 0.8f };
+
+		int numberOfValue = 2;
+		float[] value = { 0.6f, 0.4f , 0.5f};
+
+		int initialHue = (new Random()).nextInt(360);
+		int hueStep = 360 / numberOfColors;
+		for (int i = 0; i < numberOfColors; i++) {
+			hue[i] = (initialHue + i * hueStep) % 360;
+		}
+
+		for (int i = 0; i < numberOfColors; i++) {
+			hsv[0] = hue[i];
+			hsv[1] = sat[i % numberOfSat];
+			hsv[2] = value[i % numberOfValue];
+			palette[i] = Color.HSVToColor(hsv);
+		}
+
 	}
 
 	public void instantShuffle(int times) {
@@ -144,4 +181,8 @@ public class Board {
 		return columns;
 	}
 
+	public int palette(int state) {
+		assert (state < numberOfColors);
+		return palette[state];
+	}
 }

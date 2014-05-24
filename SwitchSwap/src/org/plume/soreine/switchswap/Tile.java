@@ -10,16 +10,14 @@ public class Tile {
 		UP, DOWN, RIGHT, LEFT, STILL
 	}
 
-//	// Double buffered variables ? TODO
-//	private int[] state = { 0, 0 };
-//	private Moving[] moving = { Moving.STILL, Moving.STILL };
-//	private boolean[] mustPropagate = { false, false };
-//	private double[] rotation = { 0, 0 };
-//	private int current = 0;
-	
-	private static int sideColor = Color.GRAY;
-	private static int[] palette = { Color.rgb(199, 231, 136),
-			Color.rgb(183, 136, 231), Color.rgb(136, 190, 231) };
+	// // Double buffered variables ? TODO
+	// private int[] state = { 0, 0 };
+	// private Moving[] moving = { Moving.STILL, Moving.STILL };
+	// private boolean[] mustPropagate = { false, false };
+	// private double[] rotation = { 0, 0 };
+	// private int current = 0;
+
+	private static int sideColor = Color.rgb(128, 128, 128);
 
 	private int state;
 
@@ -35,7 +33,7 @@ public class Tile {
 
 	private double rotation = 0;
 
-	private static final int MS_ROTATION_TIME = 500;
+	private static final int MS_ROTATION_TIME = 4000;
 
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState, int initState) {
 		assert (maxState > initState);
@@ -87,7 +85,7 @@ public class Tile {
 
 	public void draw(Graphics g) {
 		if (moving == Moving.STILL) {
-			g.drawRect(x, y, sizeX, sizeY, palette[state]);
+			g.drawRect(x, y, sizeX, sizeY, board.palette(state));
 		} else {
 			drawTurning(g);
 		}
@@ -96,8 +94,8 @@ public class Tile {
 
 	public void drawTurning(Graphics g) {
 		// The visible color
-		int color = (rotation > 0.5) ? palette[state]
-				: palette[(state - 1 + maxState) % maxState];
+		int color = (rotation > 0.5) ? board.palette(state) : board
+				.palette((state - 1 + maxState) % maxState);
 
 		double beta = Math.atan(0.2);
 		double alpha = Math.PI * rotation;
@@ -135,32 +133,32 @@ public class Tile {
 
 		switch (moving) {
 		case DOWN:
-			tileY = (int) (y + tileBegin * sizeY);
-			tileSizeY = (int) (tileRatio * sizeY);
+			tileY = y + ((int) Math.floor(tileBegin * sizeY));
+			tileSizeY = (int) Math.ceil(tileRatio * sizeY) + 1;
 			// The side
-			sideY = (int) (y + sideBegin * sizeY);
-			sideSizeY = (int) (sideRatio * sizeY);
+			sideY = y + ((int) Math.floor(sideBegin * sizeY));
+			sideSizeY = (int) Math.ceil(sideRatio * sizeY) + 1;
 			break;
 		case UP:
-			tileY = (int) (y + (1 - tileEnd) * sizeY);
-			tileSizeY = (int) (tileRatio * sizeY);
+			tileY = y + ((int) Math.floor((1 - tileEnd) * sizeY));
+			tileSizeY = (int) Math.ceil(tileRatio * sizeY) + 1;
 			// The side
-			sideY = (int) (y + (1 - sideEnd) * sizeY);
-			sideSizeY = (int) (sideRatio * sizeY);
+			sideY = y + ((int) Math.floor((1 - sideEnd) * sizeY));
+			sideSizeY = (int) Math.ceil(sideRatio * sizeY) + 1;
 			break;
 		case RIGHT:
-			tileX = (int) (x + tileBegin * sizeX);
-			tileSizeX = (int) (tileRatio * sizeX);
+			tileX = x + ((int) Math.floor(tileBegin * sizeX));
+			tileSizeX = (int) Math.ceil(tileRatio * sizeX) + 1;
 			// The side
-			sideX = (int) (x + sideBegin * sizeX);
-			sideSizeX = (int) (sideRatio * sizeX);
+			sideX = x + ((int) Math.floor(sideBegin * sizeX));
+			sideSizeX = (int) Math.ceil(sideRatio * sizeX) + 1;
 			break;
 		case LEFT:
-			tileX = (int) (x + (1 - tileEnd) * sizeX);
-			tileSizeX = (int) (tileRatio * sizeX);
+			tileX =  x + ((int) Math.floor((1 - tileEnd) * sizeX));
+			tileSizeX = (int) Math.ceil(tileRatio * sizeX) + 1;
 			// The side
-			sideX = (int) (x + (1 - sideEnd) * sizeX);
-			sideSizeX = (int) (sideRatio * sizeX);
+			sideX = x + ((int) Math.floor((1 - sideEnd) * sizeX));
+			sideSizeX = (int) Math.ceil(sideRatio * sizeX) + 1;
 			break;
 		default:
 			break;
@@ -179,11 +177,11 @@ public class Tile {
 	public void update(float deltaTime) {
 		if (moving != Moving.STILL) {
 
-			int numberOfTiles = (moving == Moving.UP || moving == Moving.DOWN) ?
-					board.getRows() : board.getColumns();
-					
+			int numberOfTiles = (moving == Moving.UP || moving == Moving.DOWN) ? board
+					.getRows() : board.getColumns();
+
 			rotation += deltaTime / MS_ROTATION_TIME;
-			if (mustPropagate && rotation > 2.0/((double) numberOfTiles)) {
+			if (mustPropagate && rotation > 2.0 / ((double) numberOfTiles)) {
 				propagate();
 			}
 			if (rotation > 1) {
