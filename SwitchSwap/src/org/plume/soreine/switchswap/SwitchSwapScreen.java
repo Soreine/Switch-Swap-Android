@@ -43,14 +43,14 @@ public class SwitchSwapScreen extends Screen {
 		fpsPaint.setAntiAlias(true);
 		fpsPaint.setColor(Color.RED);
 
-		int rows = 10;
-		int columns = 10;
+		int rows = 4;
+		int columns = 6;
 		int numberOfColor = 2;
 
 		width = g.getWidth();
 		height = g.getHeight();
 
-		int offset = width / 20;
+		int offset = width / 30;
 
 		// (int x, int y, int width, int height, int rows, int columns, int
 		// colorNumber)

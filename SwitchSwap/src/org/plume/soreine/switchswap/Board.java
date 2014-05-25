@@ -18,7 +18,7 @@ public class Board {
 
 	private int rows, columns;
 
-	private int x, y, width, height;
+	private int x, y, width, height, padding;
 
 	private BoardQueue eventQueue;
 
@@ -33,13 +33,17 @@ public class Board {
 
 		double ratioGap = 0.16;
 
+		this.padding = width / 20;
+		int innerWidth = width - 2 * padding;
+		int innerHeight = height - 2 * padding;
+
 		// The size of the tiles
-		int sizeX = (int) (width / (columns * (1 + ratioGap) - ratioGap));
-		int sizeY = (int) (height / (rows * (1 + ratioGap) - ratioGap));
+		int sizeX = (int) (innerWidth / (columns * (1 + ratioGap) - ratioGap));
+		int sizeY = (int) (innerHeight / (rows * (1 + ratioGap) - ratioGap));
 
 		// The gap between each tile
-		int gapX = (int) ((width / (columns * (1 + ratioGap) - ratioGap)) * ratioGap);
-		int gapY = (int) ((height / (rows * (1 + ratioGap) - ratioGap)) * ratioGap);
+		int gapX = (int) (sizeX * ratioGap);
+		int gapY = (int) (sizeY * ratioGap);
 
 		// The distance from the beginning of a tile to the beginning of the
 		// next
@@ -49,26 +53,28 @@ public class Board {
 		this.rows = rows;
 		this.columns = columns;
 
-		// Generate the palette of colors
-		this.numberOfColors = numberOfColors;
-		this.palette = new int[numberOfColors];
-		generatePalette();
-
-		int tileX = x + gapX;
-		int tileY = y + gapY;
+		int tileX = x + padding;
+		int tileY = y + padding;
 		// Initialize the array of tiles
 		int location;
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				location = i * columns + j;
-				tiles[location] = new Tile(tileX, tileY, sizeX, sizeY, numberOfColors);
+
+		for (int j = 0; j < rows; j++) {
+			for (int i = 0; i < columns; i++) {
+				location = j * columns + i;
+				tiles[location] = new Tile(tileX, tileY, sizeX, sizeY,
+						numberOfColors);
 				tiles[location].setLocationOnBoard(this, i, j);
 				tileX += widthStep;
 			}
 
 			tileY += heightStep;
-			tileX = x + gapX;
+			tileX = x + padding;
 		}
+
+		// Generate the palette of colors
+		this.numberOfColors = numberOfColors;
+		this.palette = new int[numberOfColors];
+		generatePalette();
 
 		this.eventQueue = new BoardQueue(30);
 	}
@@ -96,7 +102,7 @@ public class Board {
 			hsv[2] = value[i % numberOfValue];
 			palette[i] = Color.HSVToColor(hsv);
 		}
-		
+
 		palette[0] = Color.BLACK;
 		palette[1] = Color.WHITE;
 
@@ -110,11 +116,11 @@ public class Board {
 	}
 
 	public void handleEvent(TouchEvent event) {
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
+		for (int i = 0; i < columns; i++) {
+			for (int j = 0; j < rows; j++) {
 
 				// Check if touched
-				if (tiles[i * columns + j].touch(event)) {
+				if (tiles[j * columns + i].touch(event)) {
 					swap(i, j);
 					return;
 				}
@@ -141,36 +147,42 @@ public class Board {
 
 	// Swap with propagation
 	public void swap(int i, int j) {
-		int coord = i * columns + j;
+		int coord = j * columns + i;
 		// Propagate
 		tiles[coord].swapAlone(Tile.Moving.UP);
 
+		// Down
 		if (j + 1 < rows)
-			tiles[coord + 1].swap(Tile.Moving.RIGHT);
-		if (j - 1 >= 0)
-			tiles[coord - 1].swap(Tile.Moving.LEFT);
-		if (i + 1 < rows)
 			tiles[coord + columns].swap(Tile.Moving.DOWN);
-		if (i - 1 >= 0)
+		// Up
+		if (j - 1 >= 0)
 			tiles[coord - columns].swap(Tile.Moving.UP);
+		// Right
+		if (i + 1 < columns)
+			tiles[coord + 1].swap(Tile.Moving.RIGHT);
+		// Left
+		if (i - 1 >= 0)
+			tiles[coord - 1].swap(Tile.Moving.LEFT);
 	}
 
 	// Swap with propagation instantly
 	public void instantSwap(int i, int j) {
 		// Propagate
+		// Vertically
 		for (int k = 0; k < rows; k++) {
-			tiles[i * columns + k].instantSwap();
+			tiles[k * columns + i].instantSwap();
 		}
+		// Horizontally
 		for (int k = 0; k < columns; k++) {
 			if (k != i) {
-				tiles[k * columns + j].instantSwap();
+				tiles[j * columns + k].instantSwap();
 			}
 		}
 	}
 
 	public void instantSwap(int number) {
-		int i = number / columns;
-		int j = (number - i * columns);
+		int j = number / columns;
+		int i = (number - j * columns);
 		instantSwap(i, j);
 	}
 
@@ -178,16 +190,16 @@ public class Board {
 		int nextI = i, nextJ = j;
 		switch (move) {
 		case DOWN:
-			nextI++;
-			break;
-		case LEFT:
-			nextJ--;
-			break;
-		case RIGHT:
 			nextJ++;
 			break;
-		case UP:
+		case LEFT:
 			nextI--;
+			break;
+		case RIGHT:
+			nextI++;
+			break;
+		case UP:
+			nextJ--;
 			break;
 		default:
 			return;
@@ -198,12 +210,13 @@ public class Board {
 	}
 
 	public void propagate(Tile.Moving move, int i, int j) {
-		tiles[i * columns + j].swap(move);
+		tiles[j * columns + i].swap(move);
 	}
 
 	public void draw(Graphics g) {
 		// Draw the board
-		g.drawRoundRect(x, y, width, height, 3, 3, Color.rgb(200, 200, 200));
+		g.drawRoundRect(x, y, width, height, padding, padding,
+				Color.rgb(200, 200, 200));
 		// Draw the tiles
 		for (Tile tile : tiles) {
 			tile.draw(g);

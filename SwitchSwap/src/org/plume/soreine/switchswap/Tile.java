@@ -33,7 +33,7 @@ public class Tile {
 
 	private double rotation = 0;
 
-	private static final int MS_ROTATION_TIME = 2000;
+	private static final int MS_ROTATION_TIME = 600;
 
 	private static final float ROUNDING = 0.15f;
 

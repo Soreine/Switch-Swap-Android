@@ -31,6 +31,7 @@ public class AndroidGraphics implements Graphics {
 		this.frameBuffer = frameBuffer;
 		this.canvas = new Canvas(frameBuffer);
 		this.paint = new Paint();
+		paint.setStyle(Style.FILL);
 	}
 
 	@Override
@@ -94,7 +95,6 @@ public class AndroidGraphics implements Graphics {
 	@Override
 	public void drawRect(int x, int y, int width, int height, int color) {
 		paint.setColor(color);
-		paint.setStyle(Style.FILL);
 		canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
 	}
 	
