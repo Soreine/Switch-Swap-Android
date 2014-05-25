@@ -33,7 +33,9 @@ public class Tile {
 
 	private double rotation = 0;
 
-	private static final int MS_ROTATION_TIME = 500;
+	private static final int MS_ROTATION_TIME = 2000;
+
+	private static final float ROUNDING = 0.15f;
 
 	public Tile(int x, int y, int sizeX, int sizeY, int maxState, int initState) {
 		assert (maxState > initState);
@@ -85,7 +87,8 @@ public class Tile {
 
 	public void draw(Graphics g) {
 		if (moving == Moving.STILL) {
-			g.drawRect(x, y, sizeX, sizeY, board.palette(state));
+			g.drawRoundRect(x, y, sizeX, sizeY, sizeX * ROUNDING, sizeY
+					* ROUNDING, board.palette(state));
 		} else {
 			drawTurning(g);
 		}
@@ -106,14 +109,16 @@ public class Tile {
 
 		sideBegin = (1 - Math.cos(alpha - beta)) / 2;
 		sideEnd = (1 - Math.cos(alpha + beta)) / 2;
-		if (rotation > 0.5) {
-			// rotation > 0.5
-			tileEnd = sideBegin;
-			tileBegin = 1 - sideEnd;
-		} else {
+		if (rotation < 0.5) {
 			// rotation < 0.5
 			tileBegin = sideEnd;
 			tileEnd = 1 - sideBegin;
+			sideEnd = tileEnd;
+		} else {
+			// rotation > 0.5
+			tileEnd = sideBegin;
+			tileBegin = 1 - sideEnd;
+			sideBegin = tileBegin;
 		}
 
 		// The ratio giving the visible size of the facets
@@ -154,7 +159,7 @@ public class Tile {
 			sideSizeX = (int) Math.ceil(sideRatio * sizeX) + 1;
 			break;
 		case LEFT:
-			tileX =  x + ((int) Math.floor((1 - tileEnd) * sizeX));
+			tileX = x + ((int) Math.floor((1 - tileEnd) * sizeX));
 			tileSizeX = (int) Math.ceil(tileRatio * sizeX) + 1;
 			// The side
 			sideX = x + ((int) Math.floor((1 - sideEnd) * sizeX));
@@ -164,10 +169,12 @@ public class Tile {
 			break;
 		}
 
-		// The tile facet
-		g.drawRect(tileX, tileY, tileSizeX, tileSizeY, color);
 		// The side facet
-		g.drawRect(sideX, sideY, sideSizeX, sideSizeY, sideColor);
+		g.drawRoundRect(sideX, sideY, sideSizeX, sideSizeY, sideSizeX
+				* ROUNDING, sideSizeY * ROUNDING, sideColor);
+		// The tile facet
+		g.drawRoundRect(tileX, tileY, tileSizeX, tileSizeY, tileSizeX
+				* ROUNDING, tileSizeY * ROUNDING, color);
 	}
 
 	public boolean touch(TouchEvent event) {
@@ -181,7 +188,7 @@ public class Tile {
 					.getRows() : board.getColumns();
 
 			rotation += deltaTime / MS_ROTATION_TIME;
-			if (mustPropagate && rotation > 2.0 / ((double) numberOfTiles)) {
+			if (mustPropagate && rotation > 1 / ((double) numberOfTiles)) {
 				propagate();
 			}
 			if (rotation > 1) {

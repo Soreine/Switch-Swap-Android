@@ -18,21 +18,28 @@ public class Board {
 
 	private int rows, columns;
 
+	private int x, y, width, height;
+
 	private BoardQueue eventQueue;
 
 	public Board(int x, int y, int width, int height, int rows, int columns,
 			int numberOfColors) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+
 		this.tiles = new Tile[rows * columns];
 
-		double ratioGap = 0.12;
+		double ratioGap = 0.16;
 
 		// The size of the tiles
 		int sizeX = (int) (width / (columns * (1 + ratioGap) - ratioGap));
 		int sizeY = (int) (height / (rows * (1 + ratioGap) - ratioGap));
 
 		// The gap between each tile
-		int gapX = (int) (sizeX * ratioGap);
-		int gapY = (int) (sizeY * ratioGap);
+		int gapX = (int) ((width / (columns * (1 + ratioGap) - ratioGap)) * ratioGap);
+		int gapY = (int) ((height / (rows * (1 + ratioGap) - ratioGap)) * ratioGap);
 
 		// The distance from the beginning of a tile to the beginning of the
 		// next
@@ -47,15 +54,20 @@ public class Board {
 		this.palette = new int[numberOfColors];
 		generatePalette();
 
+		int tileX = x + gapX;
+		int tileY = y + gapY;
 		// Initialize the array of tiles
 		int location;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				location = i * columns + j;
-				tiles[location] = new Tile(x + widthStep * j, y + heightStep
-						* i, sizeX, sizeY, numberOfColors);
+				tiles[location] = new Tile(tileX, tileY, sizeX, sizeY, numberOfColors);
 				tiles[location].setLocationOnBoard(this, i, j);
+				tileX += widthStep;
 			}
+
+			tileY += heightStep;
+			tileX = x + gapX;
 		}
 
 		this.eventQueue = new BoardQueue(30);
@@ -84,6 +96,9 @@ public class Board {
 			hsv[2] = value[i % numberOfValue];
 			palette[i] = Color.HSVToColor(hsv);
 		}
+		
+		palette[0] = Color.BLACK;
+		palette[1] = Color.WHITE;
 
 	}
 
@@ -187,6 +202,9 @@ public class Board {
 	}
 
 	public void draw(Graphics g) {
+		// Draw the board
+		g.drawRoundRect(x, y, width, height, 3, 3, Color.rgb(200, 200, 200));
+		// Draw the tiles
 		for (Tile tile : tiles) {
 			tile.draw(g);
 		}

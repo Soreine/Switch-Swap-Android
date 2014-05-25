@@ -16,7 +16,7 @@ public class SwitchSwapScreen extends Screen {
 
 	private Graphics g;
 	private static int width, height;
-	private static final int backgroundColor = Color.rgb(205, 210, 210);
+	private static final int backgroundColor = Color.WHITE;
 			
 	private static boolean showFPS = true;
 	private int timePainted = 0;

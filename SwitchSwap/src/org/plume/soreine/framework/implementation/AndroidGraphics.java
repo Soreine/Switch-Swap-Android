@@ -15,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 public class AndroidGraphics implements Graphics {
 	AssetManager assets;
@@ -23,7 +24,8 @@ public class AndroidGraphics implements Graphics {
 	Paint paint;
 	Rect srcRect = new Rect();
 	Rect dstRect = new Rect();
-
+	RectF rectF = new RectF();
+	
 	public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
 		this.assets = assets;
 		this.frameBuffer = frameBuffer;
@@ -94,6 +96,18 @@ public class AndroidGraphics implements Graphics {
 		paint.setColor(color);
 		paint.setStyle(Style.FILL);
 		canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
+	}
+	
+
+	@Override
+	public void drawRoundRect(int x, int y, int width, int height, float rx,
+			float ry, int color) {
+		rectF.left = x;
+		rectF.top = y;
+		rectF.right = x + width;
+		rectF.bottom = y + height;
+		paint.setColor(color);
+		canvas.drawRoundRect(rectF, rx, ry, paint);
 	}
 
 	@Override
@@ -173,4 +187,5 @@ public class AndroidGraphics implements Graphics {
 	public int getHeight() {
 		return frameBuffer.getHeight();
 	}
+
 }
